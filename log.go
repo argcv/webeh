@@ -20,5 +20,5 @@ func WebLog(r *http.Request, v ...interface{}) {
 }
 
 func init() {
-	logger = log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
+	logger = log.New(os.Stderr, "", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile)
 }
