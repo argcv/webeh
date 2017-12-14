@@ -13,6 +13,10 @@ func Log(v ...interface{}) {
 	logger.Output(2, fmt.Sprintln(v...))
 }
 
+func Logf(f string, v ...interface{}) {
+	logger.Output(2, fmt.Sprintf(f, v...))
+}
+
 func WebLog(r *http.Request, v ...interface{}) {
 	logger.Output(2, fmt.Sprintf("%s - \"%s %s\" - \"%v\" - %v",
 		GetUserIp(r), r.Method, r.URL,
