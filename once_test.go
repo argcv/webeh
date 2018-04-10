@@ -1,12 +1,12 @@
 package webeh
 
 import (
-	"github.com/stretchr/testify/assert"
 	"math/rand"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
+	"fmt"
 )
 
 func TestOnce_Do(t *testing.T) {
@@ -22,12 +22,16 @@ func TestOnce_Do(t *testing.T) {
 				atomic.AddInt64(&value, 1)
 				time.Sleep(time.Microsecond * 200)
 			})
-			assert.Equal(t, int64(1), value)
+			if value != 1 {
+				t.Fatal(fmt.Sprintf("value %d is NOT equal to 1", value))
+			}
 		}()
 	}
 	wg.Wait()
 	o.Reset()
-	assert.Equal(t, int64(1), value)
+	if value != 1 {
+		t.Fatal(fmt.Sprintf("value %d is NOT equal to 1", value))
+	}
 	for i := 0; i < 100000; i++ {
 		wg.Add(1)
 		go func() {
@@ -36,11 +40,15 @@ func TestOnce_Do(t *testing.T) {
 				time.Sleep(time.Microsecond * 200)
 				atomic.AddInt64(&value, -2)
 			})
-			assert.Equal(t, int64(-1), value)
+			if value != -1 {
+				t.Fatal(fmt.Sprintf("value %d is NOT equal to -1", value))
+			}
 		}()
 	}
 	wg.Wait()
-	assert.Equal(t, int64(-1), value)
+	if value != -1 {
+		t.Fatal(fmt.Sprintf("value %d is NOT equal to -1", value))
+	}
 }
 
 func TestOnce_Do2(t *testing.T) {
@@ -56,11 +64,15 @@ func TestOnce_Do2(t *testing.T) {
 				atomic.AddInt64(&value, 1)
 				time.Sleep(time.Microsecond * 200)
 			})
-			assert.Equal(t, int64(1), value)
+			if value != 1 {
+				t.Fatal(fmt.Sprintf("value %d is NOT equal to 1", value))
+			}
 		}()
 	}
 	wg.Wait()
-	assert.Equal(t, int64(1), value)
+	if value != 1 {
+		t.Fatal(fmt.Sprintf("value %d is NOT equal to 1", value))
+	}
 	for i := 0; i < 100000; i++ {
 		wg.Add(1)
 		go func() {
@@ -69,11 +81,15 @@ func TestOnce_Do2(t *testing.T) {
 				time.Sleep(time.Microsecond * 200)
 				atomic.AddInt64(&value, -2)
 			})
-			assert.Equal(t, int64(-1), value)
+			if value != -1 {
+				t.Fatal(fmt.Sprintf("value %d is NOT equal to -1", value))
+			}
 		}()
 	}
 	wg.Wait()
-	assert.Equal(t, int64(-1), value)
+	if value != -1 {
+		t.Fatal(fmt.Sprintf("value %d is NOT equal to -1", value))
+	}
 }
 
 func BenchmarkOnce_Do(b *testing.B) {
@@ -84,7 +100,6 @@ func BenchmarkOnce_Do(b *testing.B) {
 			o.Do(func() {
 				atomic.AddInt64(&value, 1)
 			})
-			assert.Equal(b, int64(1), value)
 		}
 	})
 }
@@ -97,7 +112,6 @@ func BenchmarkOnce_Do2(b *testing.B) {
 			o.Do(func() {
 				atomic.AddInt64(&value, 1)
 			})
-			assert.Equal(b, int64(1), value)
 		}
 	})
 }
