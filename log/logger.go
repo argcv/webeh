@@ -2,11 +2,11 @@ package log
 
 import (
 	"fmt"
+	"github.com/argcv/webeh/repl"
 	"io"
 	"log"
 	"os"
 	"sync"
-	"github.com/argcv/webeh/repl"
 )
 
 type LogLevel int
@@ -92,23 +92,23 @@ func Fatal(v ...interface{}) {
 
 // calldepth == 0 == current
 func Debugd(calldepth int, v ...interface{}) {
-	Output(DEBUG, fmt.Sprintln(v...), calldepth + 2)
+	Output(DEBUG, fmt.Sprintln(v...), calldepth+2)
 }
 
-func Infod(calldepth int,v ...interface{}) {
-	Output(INFO, fmt.Sprintln(v...), calldepth + 2)
+func Infod(calldepth int, v ...interface{}) {
+	Output(INFO, fmt.Sprintln(v...), calldepth+2)
 }
 
-func Warnd(calldepth int,v ...interface{}) {
-	Output(WARN, fmt.Sprintln(v...), calldepth + 2)
+func Warnd(calldepth int, v ...interface{}) {
+	Output(WARN, fmt.Sprintln(v...), calldepth+2)
 }
 
-func Errord(calldepth int,v ...interface{}) {
-	Output(ERROR, fmt.Sprintln(v...), calldepth + 2)
+func Errord(calldepth int, v ...interface{}) {
+	Output(ERROR, fmt.Sprintln(v...), calldepth+2)
 }
 
-func Fatald(calldepth int,v ...interface{}) {
-	Output(FATAL, fmt.Sprintln(v...), calldepth + 2)
+func Fatald(calldepth int, v ...interface{}) {
+	Output(FATAL, fmt.Sprintln(v...), calldepth+2)
 }
 
 func Debugf(f string, v ...interface{}) {

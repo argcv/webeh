@@ -1,12 +1,12 @@
 package webeh
 
 import (
+	"fmt"
 	"math/rand"
 	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
-	"fmt"
 )
 
 func TestOnce_Do(t *testing.T) {
