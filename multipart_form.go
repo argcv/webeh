@@ -24,7 +24,7 @@ type MultipartFormReaderOption struct {
 }
 
 func NewDefaultMultipartFormReaderOption() MultipartFormReaderOption {
-	return &MultipartFormReaderOption{
+	return MultipartFormReaderOption{
 		MaxMemoryMB: 32,
 	}
 }
