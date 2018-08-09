@@ -19,12 +19,28 @@ type FileInfo struct {
 	Ext      string
 }
 
+type MultipartFormReaderOption struct {
+	MaxMemoryMB int64
+}
+
+func NewDefaultMultipartFormReaderOption() MultipartFormReaderOption {
+	return &MultipartFormReaderOption{
+		MaxMemoryMB: 32,
+	}
+}
+
 type MultipartFormReader struct {
 	R *http.Request
 }
 
-func NewMultipartFormReader(r *http.Request) (mr *MultipartFormReader) {
-	r.ParseMultipartForm(kMaxMemoryParseMultipartForm)
+func NewMultipartFormReader(r *http.Request, options ...MultipartFormReaderOption) (mr *MultipartFormReader) {
+	defaultOption := NewDefaultMultipartFormReaderOption()
+	for _, opt := range options {
+		if opt.MaxMemoryMB > 0 {
+			defaultOption.MaxMemoryMB = opt.MaxMemoryMB
+		}
+	}
+	r.ParseMultipartForm(defaultOption.MaxMemoryMB << 20)
 	mr = &MultipartFormReader{
 		R: r,
 	}
