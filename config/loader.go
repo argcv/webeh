@@ -27,6 +27,7 @@ package config
 
 import (
 	"fmt"
+	"github.com/argcv/webeh/cntr"
 	"github.com/argcv/webeh/log"
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
@@ -37,11 +38,14 @@ import (
 )
 
 type Option struct {
-	Project              string
-	Path                 string
-	FileMustExists       bool
-	DefaultPath          string
-	DefaultConfigureName string
+	Project                  string
+	Path                     string
+	FileMustExists           bool
+	DefaultPath              string
+	DefaultConfigureName     string
+	ConfigSearchPath         string
+	ConfigSearchPaths        []string
+	ConfigFallbackSearchPath string
 }
 
 func (c *Option) With(rhs *Option) *Option {
@@ -59,6 +63,15 @@ func (c *Option) With(rhs *Option) *Option {
 	}
 	if rhs.DefaultConfigureName != "" {
 		c.DefaultConfigureName = rhs.DefaultConfigureName
+	}
+	if len(rhs.ConfigSearchPaths) > 0 {
+		c.ConfigSearchPaths = append(c.ConfigSearchPaths, rhs.ConfigSearchPaths...)
+	}
+	if len(rhs.ConfigSearchPath) > 0 {
+		c.ConfigSearchPaths = append(c.ConfigSearchPaths, rhs.ConfigSearchPath)
+	}
+	if len(rhs.ConfigFallbackSearchPath) > 0 {
+		c.ConfigFallbackSearchPath = rhs.ConfigFallbackSearchPath
 	}
 	return c
 }
@@ -91,12 +104,28 @@ func LoadConfig(options ...Option) (err error) {
 	if option.Path != "" {
 		viper.SetConfigFile(option.Path)
 	} else {
-		viper.AddConfigPath(".")  // current folder
-		viper.AddConfigPath("..") // parent folder
-		viper.AddConfigPath("$HOME/")
-		viper.AddConfigPath(fmt.Sprintf("$HOME/.%s/", project))
-		viper.AddConfigPath("/etc/")
-		viper.AddConfigPath(fmt.Sprintf("/etc/%s/", project))
+		cfgPaths := option.ConfigSearchPaths
+		cfgPaths = append(cfgPaths, option.ConfigSearchPath)
+
+		cfgPaths = append(cfgPaths, ".")  // current folder
+		cfgPaths = append(cfgPaths, "..") // parent folder
+		cfgPaths = append(cfgPaths, "$HOME/")
+		cfgPaths = append(cfgPaths, fmt.Sprintf("$HOME/.%s/", project))
+		cfgPaths = append(cfgPaths, "/etc/")
+		cfgPaths = append(cfgPaths, fmt.Sprintf("/etc/%s/", project))
+
+		cfgPaths = cntr.DistinctStrings(cfgPaths...)
+
+		for _, cpath := range cfgPaths {
+			if len(cpath) > 0 {
+				viper.AddConfigPath(cpath)
+			}
+		}
+
+		if len(option.ConfigFallbackSearchPath) > 0 {
+			viper.AddConfigPath(option.ConfigFallbackSearchPath)
+		}
+
 		if conf := os.Getenv(fmt.Sprintf("%s_CFG", strings.ToUpper(project))); conf != "" {
 			viper.SetConfigFile(conf)
 		}
