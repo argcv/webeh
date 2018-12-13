@@ -6,6 +6,8 @@
 
 Some Helpers to use http easier in golang
 
+## Please user [argcv/stork](https://github.com/argcv/stork) instead.
+
 
 [badge-travis]:    https://travis-ci.org/argcv/webeh.svg?branch=master
 [link-travis]:     https://travis-ci.org/argcv/webeh
